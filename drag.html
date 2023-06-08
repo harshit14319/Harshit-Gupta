@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Drag and Drop Example</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+            box-sizing: border-box;
+        }
+
+        .container {
+            width: 100%;
+            min-height: 100vh;
+            background: #0b0423;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #left,
+        #right {
+            width: 300px;
+            min-height: 400px;
+            margin: 20px;
+            border: 2px dashed #fff;
+        }
+
+        .list {
+            background: #e91e63;
+            height: 60px;
+            margin: 30px;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            cursor: grab;
+            transition: transform 0.2s ease-in-out;
+            /* Add transition for smooth visual feedback */
+            border-radius: 4px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .list.dragging {
+            background: #7f5fe0;
+            opacity: 0.8;
+            transform: scale(1.1);
+        }
+
+        #successMessage {
+            position: fixed;
+            top: 15%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 128, 0, 0.9);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 4px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            display: none;
+            z-index: 9999;
+            font-size: 18px;
+        }
+
+        .reset-button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        .reset-button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div id="left">
+            <div class="list" draggable="true"><img src="icon.png" style="margin-right: 10px;">List Item 1</div>
+            <div class="list" draggable="true"><img src="icon.png" style="margin-right: 10px;">List Item 2</div>
+            <div class="list" draggable="true"><img src="icon.png" style="margin-right: 10px;">List Item 3</div>
+            <div class="list" draggable="true"><img src="icon.png" style="margin-right: 10px;">List Item 4</div>
+        </div>
+        <div id="right"></div>
+        <button class="reset-button" onclick="reset()">Reset</button>
+        <div id="successMessage">Item dropped successfully!</div>
+    </div>
+
+    <script>
+        let lists = document.getElementsByClassName("list");
+        let rightBox = document.getElementById("right");
+        let leftBox = document.getElementById("left");
+        let originalLeftContent = leftBox.innerHTML;
+        let selected = null;
+
+        for (list of lists) {
+            list.addEventListener("dragstart", function (e) {
+                selected = e.target;
+                selected.classList.add("dragging"); // Add class to indicate dragging
+            });
+
+            list.addEventListener("dragend", function (e) {
+                selected.classList.remove("dragging"); // Remove class after dragging ends
+                selected = null;
+            });
+        }
+
+        rightBox.addEventListener("dragover", function (e) {
+            e.preventDefault();
+        });
+
+        rightBox.addEventListener("drop", function (e) {
+            if (selected) {
+                rightBox.appendChild(selected);
+                displaySuccessMessage();
+            }
+        });
+
+        leftBox.addEventListener("dragover", function (e) {
+            e.preventDefault();
+        });
+
+        leftBox.addEventListener("drop", function (e) {
+            if (selected) {
+                leftBox.appendChild(selected);
+            }
+        });
+
+        function reset() {
+            // Clear the second container
+            rightBox.innerHTML = "";
+
+            // Reset the first container to its original state
+            leftBox.innerHTML = originalLeftContent;
+        }
+
+        function displaySuccessMessage() {
+            const successMessage = document.getElementById("successMessage");
+            successMessage.style.display = "block";
+            setTimeout(function () {
+                successMessage.style.display = "none";
+            }, 2000);
+        }
+    </script>
+</body>
+
+</html>
